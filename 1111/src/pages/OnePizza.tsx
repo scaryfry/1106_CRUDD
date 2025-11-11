@@ -39,8 +39,9 @@ const OnePizza = () => {
           <h2>{pizza.leiras}</h2>
           <img width={200} src={`${baseURL}/kepek/${pizza.imageUrl}`} />
           <br />
-          <button>Szerkesztés</button>
           <button onClick={deletePizza}>Törlés</button>
+          <button onClick={editPizza}>Módosítás</button>
+
         </>
       ) : (
         <>A pizza nem található!</>

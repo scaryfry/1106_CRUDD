@@ -5,51 +5,61 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 
 const EditPizza = () => {
-  const {id} = useParams();
-  const [nev, setNev] = useState<string>("");
-  const [leiras, setLeiras] = useState<string>("");
-  const [ar, setAr] = useState<number>(0);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const { id } = useParams();
 
-  useEffect(() => {
-    apiClient.get(`/pizzak/${id}`).then((response) => {
-        setNev(response.data.nev ?? "")
-        setLeiras(response.data.leiras ?? "")
-        setAr(response.data.ar ?? 0)
-        setImageUrl(response.data.imageUrl ?? "")
-    })
-  })
+  const [pizza, setPizza] = useState<Pizza>({
+    nev: "",
+    leiras: "",
+    ar: 0,
+    imageUrl: "",
+  });
   
-  const submit = () => {
-    const p: Pizza = {
-      nev,
-      leiras,
-      ar,
-      imageUrl,
-    };
-
+  useEffect(() => {
     apiClient
-      .post("/pizzak", p)
-      .then(() => toast.success("Sikeres hozzáadás!"))
-      .catch(() => toast.error("Sikertelen hozzáadás!"));
+      .get(`/pizzak/${id}`)
+      .then((res) => setPizza(res.data))
+      .catch(() => toast.error("A pizzák betöltése sikertelen volt"));
+  }, [id]);
+
+  const submit = () => {
+    apiClient
+      .put(`/pizzak/${id}`, pizza)
+      .then(() => toast.success("Sikeres szerkesztés!"))
+      .catch(() => toast.error("Sikertelen szerkesztés!"));
   };
 
   return (
     <>
       <h1>Név:</h1>
-      <input type="text" value={nev} onChange={(e) => setNev(e.target.value)} />
+      <input
+        type="text"
+        value={pizza.nev}
+        onChange={(e) => setPizza({ ...pizza, nev: e.target.value })}
+      />
 
       <h1>Leírás</h1>
-      <input type="text" value = {leiras} onChange={(e) => setLeiras(e.target.value)} />
+      <input
+        type="text"
+        value={pizza.leiras}
+        onChange={(e) => setPizza({ ...pizza, leiras: e.target.value })}
+      />
 
       <h1>Ár</h1>
-      <input type="number" value={ar} onChange={(e) => setAr(Number(e.target.value))} />
+      <input
+        type="number"
+        value={pizza.ar}
+        onChange={(e) => setPizza({ ...pizza, ar: Number(e.target.value) })}
+      />
 
-      <h1>setImageUrl</h1>
-      <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+      <h1>Kép URL</h1>
+      <input
+        type="text"
+        value={pizza.imageUrl}
+        onChange={(e) => setPizza({ ...pizza, imageUrl: e.target.value })}
+      />
 
       <br />
-      <button onClick={submit}>Hozzáadás</button>
+      <button onClick={submit}>Szerkesztés</button>
     </>
   );
 };
